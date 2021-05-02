@@ -12,6 +12,7 @@ g = Github(settings.github_token)
 
 app = FastAPI()
 
+
 class RepoInfo(BaseModel):
     url: str
     forks: int
@@ -20,7 +21,7 @@ class RepoInfo(BaseModel):
 
 
 @app.get("/users/{user}/{repo}", response_model=RepoInfo)
-async def repo(user:str, repo: str):
+async def repo(user: str, repo: str):
     """Endpoint to return repo info"""
     try:
         r = g.get_user(user).get_repo(repo)
@@ -31,10 +32,7 @@ async def repo(user:str, repo: str):
     score = num_stars * 1 + num_forks * 2
     popular = score >= 500
     return RepoInfo(
-        url=f"{user}/{repo}",
-        forks=num_forks,
-        stars=num_stars,
-        popular=popular
+        url=f"{user}/{repo}", forks=num_forks, stars=num_stars, popular=popular
     )
 
 
