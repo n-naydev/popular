@@ -11,10 +11,12 @@ class GithubMock:
             self.totalCount = totalCount
     def __init__(self, user=None, repo=None, forks=0, stars=0):
         self.user = user
+        self.bio = None
         self.repo = repo
         self.forks = self.RepoMock(forks)
         self.stars = self.RepoMock(stars)
-    def get_user(self, user):
+
+    def get_user(self, user=None):
         if not self.user:
             raise GithubException(404, "User not found", headers=None)
         return self
@@ -60,3 +62,15 @@ def test_3_repo_popular(monkeypatch):
     response = client.get(f"/users/{user}/{repo}")
     assert response.status_code == 200
     assert response.json() == {"forks": 0, "popular": True, "stars": 500, "url": f"{user}/{repo}"}
+
+
+def test_4_health_nok(monkeypatch):
+    monkeypatch.setattr(main, "g", GithubMock())
+    response = client.get("/health")
+    assert response.status_code == 503
+
+
+def test_5_health_ok(monkeypatch):
+    monkeypatch.setattr(main, "g", GithubMock(user="aaa"))
+    response = client.get("/health")
+    assert response.status_code == 200

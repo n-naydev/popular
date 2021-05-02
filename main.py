@@ -36,3 +36,12 @@ async def repo(user:str, repo: str):
         stars=num_stars,
         popular=popular
     )
+
+
+@app.get("/health")
+async def health():
+    try:
+        r = g.get_user().bio
+    except GithubException:
+        raise HTTPException(status_code=503)
+    return None
